@@ -1,11 +1,11 @@
-import {bit, nibble, byte, word} from '../src/index';
+import {bit, nibble, byte, word, dword} from '../src/index';
 
 describe('TEST bit', () => {
     const zero          = bit(0x0);
     const max           = bit(0x1);
     const half          = bit(0x0);
-    const overflow0     = bit(0xFFFFFFFE);
-    const overflow1     = bit(0xFFFFFFFF);
+    const overflow0     = bit(0xE);
+    const overflow1     = bit(0xF);
     const toArray       = bit.toArray(max);
     const toBinary      = bit.toBinary(half);
     const toHexadecimal = bit.toHexadecimal(half);
@@ -29,8 +29,8 @@ describe('TEST bit', () => {
     test('toSigned',          () => expect(toSigned)     .toBe(-0));
     test('valueOf',           () => expect(valueOf)      .toBe(1));
     test('fromArray',         () => expect(fromArray)    .toBe(1));
-    test('get 1',             () => expect(get0)         .toBe(false));
-    test('get 2',             () => expect(get1)         .toBe(true));
+    test('get half[0]',       () => expect(get0)         .toBe(false));
+    test('get max[0]',        () => expect(get1)         .toBe(true));
     test('set',               () => expect(set)          .toBe(1));
 });
 
@@ -38,8 +38,8 @@ describe('TEST nibble', () => {
     const zero          = nibble(0x0);
     const max           = nibble(0xF);
     const half          = nibble(0x7);
-    const overflow0     = nibble(0xFFFFFFFE);
-    const overflow1     = nibble(0xFFFFFFFF);
+    const overflow0     = nibble(0xFE);
+    const overflow1     = nibble(0xFF);
     const toArray       = nibble.toArray(max);
     const toBinary      = nibble.toBinary(half);
     const toHexadecimal = nibble.toHexadecimal(half);
@@ -63,8 +63,8 @@ describe('TEST nibble', () => {
     test('toSigned',          () => expect(toSigned)     .toBe(-7));
     test('valueOf',           () => expect(valueOf)      .toBe(15));
     test('fromArray',         () => expect(fromArray)    .toBe(15));
-    test('get 1',             () => expect(get0)         .toBe(false));
-    test('get 2',             () => expect(get1)         .toBe(true));
+    test('get half[3]',       () => expect(get0)         .toBe(false));
+    test('get half[0]',       () => expect(get1)         .toBe(true));
     test('set',               () => expect(set)          .toBe(8));
 });
 
@@ -72,8 +72,8 @@ describe('TEST byte', () => {
     const zero          = byte(0x00);
     const max           = byte(0xFF);
     const half          = byte(0x7F);
-    const overflow0     = byte(0xFFFFFFFE);
-    const overflow1     = byte(0xFFFFFFFF);
+    const overflow0     = byte(0xFFFE);
+    const overflow1     = byte(0xFFFF);
     const toArray       = byte.toArray(max);
     const toBinary      = byte.toBinary(half);
     const toHexadecimal = byte.toHexadecimal(half);
@@ -97,8 +97,8 @@ describe('TEST byte', () => {
     test('toSigned',          () => expect(toSigned)     .toBe(-127));
     test('valueOf',           () => expect(valueOf)      .toBe(255));
     test('fromArray',         () => expect(fromArray)    .toBe(255));
-    test('get 1',             () => expect(get0)         .toBe(false));
-    test('get 2',             () => expect(get1)         .toBe(true));
+    test('get half[7]',       () => expect(get0)         .toBe(false));
+    test('get half[0]',       () => expect(get1)         .toBe(true));
     test('set',               () => expect(set)          .toBe(128));
 });
 
@@ -131,7 +131,41 @@ describe('TEST word', () => {
     test('toSigned',          () => expect(toSigned)     .toBe(-32767));
     test('valueOf',           () => expect(valueOf)      .toBe(65535));
     test('fromArray',         () => expect(fromArray)    .toBe(65535));
-    test('get 1',             () => expect(get0)         .toBe(false));
-    test('get 2',             () => expect(get1)         .toBe(true));
+    test('get half[15]',      () => expect(get0)         .toBe(false));
+    test('get half[0]',       () => expect(get1)         .toBe(true));
     test('set',               () => expect(set)          .toBe(32768));
+});
+
+describe('TEST dword', () => {
+    const zero          = dword(0x0000);
+    const max           = dword(0xFFFFFFFF);
+    const half          = dword(0x7FFFFFFF);
+    const overflow0     = dword(0xFFFFFFFFFFFE);
+    const overflow1     = dword(0xFFFFFFFFFFFF);
+    const toArray       = dword.toArray(max);
+    const toBinary      = dword.toBinary(half);
+    const toHexadecimal = dword.toHexadecimal(half);
+    const toString      = dword.toString(half);
+    const toSigned      = dword.toSigned(max);
+    const valueOf       = dword.valueOf(max);
+    const fromArray     = dword.fromArray([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]);
+    const get0          = dword.get(half, 31);
+    const get1          = dword.get(half, 0);
+    const set           = dword.set(zero, 31, true);
+
+    test('CREATE zero',       () => expect(zero)         .toBe(0n));
+    test('CREATE max',        () => expect(max)          .toBe(4294967295n));
+    test('CREATE half',       () => expect(half)         .toBe(2147483647n));
+    test('CREATE overflow 1', () => expect(overflow0)    .toBe(4294967294n));
+    test('CREATE overflow 2', () => expect(overflow1)    .toBe(4294967295n));
+    test('toArray',           () => expect(toArray)      .toStrictEqual([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]));
+    test('toBinary',          () => expect(toBinary)     .toBe('01111111111111111111111111111111'));
+    test('toHexadecimal',     () => expect(toHexadecimal).toBe('7FFFFFFF'));
+    test('toString',          () => expect(toString)     .toBe('1111111111111111111111111111111'));
+    test('toSigned',          () => expect(toSigned)     .toBe(-2147483647n));
+    test('valueOf',           () => expect(valueOf)      .toBe(4294967295n));
+    test('fromArray',         () => expect(fromArray)    .toBe(4294967295n));
+    test('get half[31]',      () => expect(get0)         .toBe(false));
+    test('get half[0]',       () => expect(get1)         .toBe(true));
+    test('set',               () => expect(set)          .toBe(2147483648n));
 });
