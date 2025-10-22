@@ -1,6 +1,6 @@
 {
   "name": "@libslm/binary",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "homepage": "https://github.com/libslm/binary#readme",
   "description": "Low-level binary data manipulation library with typed primitives and bitwise operations in TypeScript.",
   "keywords": [
