@@ -1,0 +1,16 @@
+# Dependency directories
+node_modules/
+
+# Typescript
+tsconfig.json
+
+# Source files
+src/
+
+# Test files
+tests/
+jest.config.js
+
+# Github
+.github/
+.gitignore

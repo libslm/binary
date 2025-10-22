@@ -1,0 +1,47 @@
+{
+  "name": "@libslm/binary",
+  "version": "0.01.01",
+  "homepage": "https://github.com/libslm/binary#readme",
+  "description": "Low-level binary data manipulation library with typed primitives and bitwise operations in TypeScript.",
+  "keywords": [
+    "binary",
+    "bitwise",
+    "low-level",
+    "binary-operations",
+    "typescript",
+    "bit-manipulation",
+    "bit",
+    "byte",
+    "nibble",
+    "word",
+    "dword",
+    "experimental",
+    "libslm"
+  ],
+  "license": "MIT",
+  "author": "Delta Thiesen <delta.thiesen.1990@gmail.com>",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "generate-types": "ts-node tools/type.generator.ts",
+    "compile": "tsc && npm run transfer",
+    "transfer": "copyfiles -u 1 \"./src/**/*.d.ts\" dist",
+    "build": "npm run generate-types && npm run compile",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "copyfiles": "^2.4.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.2",
+    "ts-node-dev": "2.0.0",
+    "typescript": "^5.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/libslm/binary.git"
+  },
+  "bugs": {
+    "url": "https://github.com/libslm/binary/issues"
+  }
+}
