@@ -256,7 +256,7 @@ word.fromArray = (array: bitLike[]): word => { return word(fromArray(array)) }
 /**
  * Represents a 32-bit binary value.
  */
-export const dword = (value: number): dword => (value & dword.mask) as dword;
+export const dword = (value: number | bigint): dword => BigInt(value) & BigInt(dword.mask) as dword;
 
 /** Number of bits. */
 dword.size = 16 as const;
@@ -271,7 +271,7 @@ dword.decimalMask = 0x7FFFFFFF as const;
 dword.signMask = 0x80000000 as const;
 
 /** Converts a `word` to an 8-bit array. */
-dword.toArray = (binary: dword): dwordArray => { return toArray(binary, dword.size) as dwordArray }
+dword.toArray = (binary: dword): dwordArray => { return bigintToArray(binary, dword.size) as dwordArray }
 
 /** Converts to a binary string. */
 dword.toBinary = (binary: dword): string => { return padding(binary.toString(2), 32).toLocaleUpperCase() }
@@ -283,16 +283,16 @@ dword.toHexadecimal = (binary: dword): string => { return padding(binary.toStrin
 dword.toString = (binary: dword): string => { return binary.toString(2).toLocaleUpperCase() }
 
 /** Converts to signed number. */
-dword.toSigned = (binary: dword): number => { return toSigned(binary, dword.signMask, dword.decimalMask) }
+dword.toSigned = (binary: dword): bigint => { return bigintToSigned(binary, BigInt(dword.signMask), BigInt(dword.decimalMask)) }
 
 /** Returns numeric value. */
-dword.valueOf = (binary: dword): number => { return binary.valueOf() }
+dword.valueOf = (binary: dword): bigint => { return binary.valueOf() }
 
 /** Gets the bit value at index. */
-dword.get = (binary: dword, at: dwordIndex): boolean => { return get(binary, at) }
+dword.get = (binary: dword, at: dwordIndex): boolean => { return bigintGet(binary, BigInt(at)) }
 
 /** Sets the bit at index with a `bitLike` value. */
-dword.set = (binary: dword, at: dwordIndex, value: bitLike): dword => { return dword(set(binary, at, value)) }
+dword.set = (binary: dword, at: dwordIndex, value: bitLike): dword => { return dword(bigintSet(binary, BigInt(at), value)) }
 
 /** Creates a `word` from a `bitLike` array. */
 dword.fromArray = (array: bitLike[]): dword => { return dword(fromArray(array)) }
@@ -350,6 +350,40 @@ function padding(value: string, length: number): string {
         let index: number = 0, stringIndex: number = value.length - length;
         index < length;
         result += stringIndex >= 0? value[stringIndex] : '0', index++, stringIndex++
+    );
+
+    return result;
+}
+
+//##################################################################################################################
+//#
+//#         Utilities for BigInt
+//#
+//##################################################################################################################
+
+function bigintGet(binary: bigint, at: bigint): boolean {
+    return (binary >> at) & BigInt(0x1)? true : false;
+}
+
+function bigintSet(binary: bigint, at: bigint, value: bitLike): bigint {
+    let current: boolean = bigintGet(binary, at);
+    let adder: bigint = value? BigInt(1) << at : -BigInt(1) << at;
+
+    if (current !== (value? true : false)) return binary + adder;
+    return binary;
+}
+
+function bigintToSigned(binary: bigint, signMask: bigint, decimalMask: bigint): bigint {
+    return binary & signMask? -(binary & decimalMask) : binary;
+}
+
+function bigintToArray(binary: bigint, length: number): bit[] {
+    let result: bit[] = [];
+
+    for(
+        let index: number = length - 1, position: number = 0;
+        index >= 0;
+        result[index] = binary >> BigInt(position)? 1 : 0, index--, position++
     );
 
     return result;
